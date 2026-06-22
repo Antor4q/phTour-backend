@@ -12,6 +12,10 @@ export interface IAuthProvider {
     providerId: string;
 }
 
+export interface ITour{
+    name:string
+}
+
 export enum IsActive {
     ACTIVE = "ACTIVE",
     INACTIVE = "INACTIVE",
