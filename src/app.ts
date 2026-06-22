@@ -4,6 +4,7 @@ import cors from "cors";
 import { router } from './app/routes';
 
 import { globalErrHandler } from './app/middlewars/globalErrHandler';
+import notFound from './app/middlewars/notFound';
 
 
 
@@ -19,5 +20,8 @@ app.get('/', (req: Request, res: Response) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 app.use(globalErrHandler)
+
+// not found route
+app.use(notFound)
 
 export default app;
