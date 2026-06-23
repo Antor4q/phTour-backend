@@ -16,11 +16,12 @@ const createUser = async(payload: Partial<IUser>) => {
     }
 
     const hashedPassword = await bcryptjs.hash(password as string,10)
-   console.log(hashedPassword)
+   
     const authProvider: IAuthProvider = {provider:"credentials",providerId:email as string}
      const user = await User.create({
                
                 email,
+                password: hashedPassword,
                 auths: [authProvider],
                 ...rest
             })
