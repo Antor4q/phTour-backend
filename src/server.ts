@@ -3,6 +3,7 @@ import {Server} from 'http';
 import mongoose from 'mongoose';
 import app from './app';
 import { envVar } from './app/config/env';
+import { seedSuperAdmin } from './app/utils/seedSuperAdmin';
 
 let server: Server;
 
@@ -21,7 +22,10 @@ const startServer = async() => {
     }
 }
 
-startServer();
+(async()=>{
+    startServer();
+seedSuperAdmin();
+})()
 
 
 // 25-10 sigterm rejection error

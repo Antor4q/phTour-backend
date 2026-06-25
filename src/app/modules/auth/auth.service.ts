@@ -11,13 +11,16 @@ import { envVar } from "../../config/env"
 const credentialLogin = async (payload: Partial<IUser>) => {
   
     const {email, password} = payload
-
+console.log("Input Password:", password);
     const isUserExist = await User.findOne({email})
+    console.log("DB Password:", isUserExist);
     
         if(!isUserExist){
           throw new AppError(httStatus.BAD_REQUEST, "User Does not Exist")
         }
+        console.log("old pass:", password)
         const isPasswordMatched = await bcrypt.compare(password as string,isUserExist.password as string)
+      console.log("Matched:", isPasswordMatched);
         if(!isPasswordMatched){
         throw new AppError(httStatus.BAD_REQUEST, "Incorrect password")
     }

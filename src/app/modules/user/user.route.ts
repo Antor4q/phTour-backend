@@ -39,5 +39,6 @@ const checkAuth = (...authRoles: string[]) =>  async(req: Request, res: Response
 
 router.post("/register",validateRequest(createUserZodSchema), UserControllers.createUser)
 router.get("/all-users",checkAuth(Role.ADMIN,Role.SUPER_ADMIN),UserControllers.getAllUsers)
+router.patch("/:id",checkAuth(...Object.values(Role)),UserControllers.updateUser)
 
 export const UserRoutes = router;
