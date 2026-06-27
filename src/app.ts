@@ -5,10 +5,12 @@ import { router } from './app/routes';
 
 import { globalErrHandler } from './app/middlewars/globalErrHandler';
 import notFound from './app/middlewars/notFound';
+import cookieParser from 'cookie-parser';
 
 
 
 const app = express();
+app.use(cookieParser())
 app.use(express.json());
 app.use(cors());
 
