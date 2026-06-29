@@ -70,20 +70,11 @@ const getAllUsers = async () => {
     }
   }
 }
-const logOut = async (email: string) => {
-  const user = await User.find({email: email});
-  const totalUsers= await User.countDocuments()
-  return {
-    data: user,
-    meta: {
-      total: totalUsers
-    }
-  }
-}
+
 
 export const UserServices = {
   createUser,
   getAllUsers,
   updateUser,
-  logOut,
+  
 }
