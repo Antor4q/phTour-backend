@@ -6,11 +6,25 @@ import { router } from './app/routes';
 import { globalErrHandler } from './app/middlewars/globalErrHandler';
 import notFound from './app/middlewars/notFound';
 import cookieParser from 'cookie-parser';
+import passport from 'passport';
+import expressSession from "express-session"
 
 
 
 const app = express();
-app.use(cookieParser())
+
+// middleWars for passport
+
+app.use(expressSession({
+   secret: "Your secret",
+   resave: false,
+   saveUninitialized: false
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
+// end
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 
