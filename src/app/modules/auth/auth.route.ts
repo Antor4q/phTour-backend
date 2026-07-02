@@ -1,7 +1,9 @@
-import { Router } from "express";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NextFunction, Request, Response, Router } from "express";
 import { AuthControllers } from "./auth.controler";
 import { checkAuth } from "../../middlewars/checkAuth";
 import { Role } from "../user/user.interface";
+import passport from "passport";
 
 const router = Router()
 
@@ -9,5 +11,13 @@ router.post("/login", AuthControllers.credentialLogin)
 router.post("/refresh-token", AuthControllers.getNewAccessToken)
 router.post("/logout", AuthControllers.logOut)
 router.post("/reset-password",checkAuth(...Object.values(Role)), AuthControllers.resetPassword)
+// passport google auth routes
+// /booking -> /login -> successful google login -> /booking frontend
+// /login -> successful google login -> /frontend home
+router.get("/google", async(req: Request, res: Response, next: NextFunction) => {
+   const redirect = req.query.redirect || "/"
+    passport.authenticate("google", {scope: ["profile", "email"], state: redirect as string})(req,res, next)
+})
+router.get("/google/callback", passport.authenticate("google",{failureRedirect: "/login"}), AuthControllers.googleAuthCallback)
 
 export const AuthRoutes = router;
