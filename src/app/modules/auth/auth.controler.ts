@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-useless-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express"
@@ -11,19 +12,50 @@ import { createUserTokens } from "../../utils/userTokens"
 import { JwtPayload } from "jsonwebtoken"
 import { envVar } from "../../config/env"
 import { ConnectionStates } from "mongoose"
+import passport from "passport"
 
 
 const credentialLogin = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
-    const loginInfo = await AuthServices.credentialLogin(req.body)
+    // const loginInfo = await AuthServices.credentialLogin(req.body) -- this is custom credential login
 
-  setAuthCookie(res, loginInfo)
+    // passportJs credential login start
+    passport.authenticate("local", async(err:any,user: any, info:any)=>{
+
+        if(err){
+            return next(new AppError(401, err))
+            // return next(err)
+        }
+        if(!user){
+            return next(new AppError(401, info.message))
+        }
+
+        const userTokens = await createUserTokens(user)
+
+        const {password,...rest} = user.toObject()
+
+         setAuthCookie(res, userTokens)
 
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
         message: "User Logged In Successfully",
-        data: loginInfo,
+        data: {
+            accessToken: userTokens.accessToken,
+            refreshToken: userTokens.refreshToken,
+            user: rest
+        },
     })
+    })(req,res,next)
+    // passportJs credential login end
+
+//   setAuthCookie(res, loginInfo)
+
+//     sendResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.OK,
+//         message: "User Logged In Successfully",
+//         data: loginInfo,
+//     })
 })
 const getNewAccessToken = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
     const refreshToken = req.cookies.refreshToken;
