@@ -9,8 +9,8 @@ import { envVar } from "../../config/env";
 
 
 const createUser = async(payload: Partial<IUser>) => {
+ 
     const { email, password, ...rest} = payload
-
     const isUserExist = await User.findOne({email})
 
     if(isUserExist){
@@ -20,6 +20,7 @@ const createUser = async(payload: Partial<IUser>) => {
     const hashedPassword = await bcryptjs.hash(password as string,10)
    
     const authProvider: IAuthProvider = {provider:"credentials",providerId:email as string}
+    // console.log(email, password, authProvider, rest)
      const user = await User.create({
                
                 email,
@@ -27,6 +28,7 @@ const createUser = async(payload: Partial<IUser>) => {
                 auths: [authProvider],
                 ...rest
             })
+           
         return user
 }
 const updateUser = async(userId: string, payload: Partial<IUser>, decodedToken:JwtPayload ) => {
