@@ -3,10 +3,18 @@ import { NextFunction, Request, Response } from "express"
 import { envVar } from "../config/env"
 import AppError from "../errorHelpers/appError"
 
+import { handlerDuplicateErrors } from "../helpers/handleDuplicateErr"
+import { handlerCastErrors } from "../helpers/handleCastErr"
+import { handlerZodErrors } from "../helpers/handleZodErr"
+import { handlerValidationErrors } from "../helpers/handleValidationErr"
+import { TErrorSources } from "../interfaces/error.types"
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 export const globalErrHandler = ((err:any, req: Request, res: Response, next: NextFunction)=>{
-
+ if(envVar.NODE_ENV === "development"){
+            console.log(err)
+        }
   /**
    * Mongos
    * Mongos errors ki hote pare
@@ -15,47 +23,36 @@ export const globalErrHandler = ((err:any, req: Request, res: Response, next: Ne
    * 3> validation error
    * zod
    * */ 
-  const errorSources: any = []
+    let errorSources: TErrorSources[] = []
     let statusCode = 500
     let message = `Something went wrong!`
     
     // duplicate error
     if(err.code === 11000){
-      console.log("Duplicate error", err.message)
-      statusCode = 400
-      const duplicate = err.message.match(/"([^"]*)"/)
-      console.log(duplicate,"from dulicate error")
-      message = `${duplicate[1]} already exists`
+      
+      const simplifiedError = handlerDuplicateErrors(err)
+      statusCode = simplifiedError.statusCode
+      message = simplifiedError.message
     } 
     // object id error
     else if(err.name === "CastError"){
-      statusCode = 400;
-      message = "Invalid MongoDB ObjectId, Please provide a valid id"
+      const simplifiedErr= handlerCastErrors(err)
+      statusCode = simplifiedErr.statusCode
+      message = simplifiedErr.message
     }
     // zod error
     else if(err.name === "ZodError"){
-      statusCode = 400
-      message = "Zod Error"
-      console.log(err.issues,"from zod")
-      err.issues.forEach((issue:any)=> {
-        errorSources.push({
-          path: issue.path[issue.path],
-          message: issue.message
-        })
-      })
-     
-    }
-    // validation error
+      const simplifiedErr = handlerZodErrors(err)
+      statusCode = simplifiedErr.statusCode
+      message = simplifiedErr.message
+      errorSources = simplifiedErr.errorSources as TErrorSources[]
+     }
+ // validation error
     else if(err.name === "ValidationError"){
-      statusCode = 400
-      const errors = Object.values(err.errors)
-      
-      errors.forEach((errorObject: any) => errorSources.push({
-        path: errorObject.path,
-        message: errorObject.message
-      }))
-     
-      message = err.message
+      const simplifiedError = handlerValidationErrors(err)
+      statusCode = simplifiedError.statusCode
+      errorSources = simplifiedError.errorSources as TErrorSources[]
+      message = simplifiedError.message
     }
     else if(err instanceof AppError){
         // sage.match(/"([^"]*)"/)
@@ -69,7 +66,7 @@ export const globalErrHandler = ((err:any, req: Request, res: Response, next: Ne
     success: false,
     message,
     errorSources,
-    err,
+    err : envVar.NODE_ENV === "development" ? err : null,
     Stack: envVar.NODE_ENV === "development" ? err.stack : null
   })
 })
