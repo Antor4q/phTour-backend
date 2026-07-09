@@ -8,15 +8,49 @@ import httpStatus from "http-status-codes"
 
 const createDivision = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
    
-    const division = await DivisionServices.createDivision(req.body);
+    const result = await DivisionServices.createDivision(req.body);
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
         message: "Division Created Successfully",
-        data: division,
+        data: result,
     })
 })
 
+const getAllDivisions = catchAsync(async(req:Request, res:Response) => {
+    const result = await DivisionServices.getAllDivisions();
+     sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Division Retrived Successfully",
+        data: result,
+    })
+}
+)
+const updateDivision =  catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    const result = await DivisionServices.updateDivision(id, req.body);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Division updated",
+        data: result,
+    });
+});
+const deleteDivision = catchAsync(async (req: Request, res: Response) => {
+    const result = await DivisionServices.deleteDivision(req.params.id);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Division deleted",
+        data: result,
+    });
+});
+
 export const DivisionControllers = {
-    createDivision
+    createDivision,
+    getAllDivisions,
+    updateDivision,
+    deleteDivision
 }

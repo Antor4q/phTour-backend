@@ -7,19 +7,28 @@ export const createDivisionZodSchema = z.object({
     .trim()
     .min(1, "Division name is required"),
 
-  slug: z
-    .string()
-    .trim()
-    .min(1, "Slug is required"),
 
   thumbnail: z
     .string()
-    .trim()
-    .url("Thumbnail must be a valid URL")
     .optional(),
 
   description: z
     .string()
+    .optional(),
+});
+
+export const updateDivisionZodSchema = z.object({
+   name: z
+    .string()
     .trim()
+    .min(1, "Division name is required"),
+
+
+  thumbnail: z
+    .string()
+    .optional(),
+
+  description: z
+    .string()
     .optional(),
 });

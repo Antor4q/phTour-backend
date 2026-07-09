@@ -1,11 +1,17 @@
 import { Router } from "express";
 import { validateRequest } from "../../middlewars/validateReq";
-import { createDivisionZodSchema } from "./division.validation";
+import { createDivisionZodSchema, updateDivisionZodSchema } from "./division.validation";
 import { DivisionControllers } from "./division.controler";
+import { checkAuth } from "../../middlewars/checkAuth";
+import { Role } from "../user/user.interface";
 
 const router = Router()
 
-router.post("/create", validateRequest(createDivisionZodSchema), DivisionControllers.createDivision)
+router.post("/create",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(createDivisionZodSchema), DivisionControllers.createDivision)
+
+router.get("/", DivisionControllers.getAllDivisions);
+router.patch("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(updateDivisionZodSchema), DivisionControllers.updateDivision);
+router.delete("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), DivisionControllers.deleteDivision)
 
 
 export const DivisionRoutes = router;
