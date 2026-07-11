@@ -7,7 +7,7 @@ export const createDivisionZodSchema = z.object({
     .trim()
     .min(1, "Division name is required"),
 
-
+slug: z.string().optional(),
   thumbnail: z
     .string()
     .optional(),

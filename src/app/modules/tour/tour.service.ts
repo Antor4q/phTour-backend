@@ -17,9 +17,9 @@ const createTour = async (payload: ITour) => {
     // }
 
     // payload.slug = slug;
-  console.log(payload, " ---from controller")
-    const tour = await Tour.create(payload)
 
+    const tour = await Tour.create(payload)
+ 
     return tour;
 };
 

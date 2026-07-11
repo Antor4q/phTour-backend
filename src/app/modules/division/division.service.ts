@@ -5,6 +5,14 @@ import httpStatus from "http-status-codes"
 
 
 const createDivision =async (payload: IDivision) => {
+//   const baseSlug = payload.name.toLowerCase().split(" ").join("-")
+
+//   let slug = `${baseSlug}-division`
+//   let counter = 0
+//   while(await Division.exists({slug})){
+//    slug = `$slug-${counter++}`
+//   }
+//   payload.slug = slug
 
  const isDivisionExist = await Division.findOne({name: payload.name})
 
@@ -14,14 +22,9 @@ const createDivision =async (payload: IDivision) => {
 
  
 
-  const slug = payload.name
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w-]+/g, "")
-    .replace(/--+/g, "-");
 
- const division = await Division.create({...payload, slug});
+
+ const division = await Division.create(payload);
  return division
 }
 
@@ -48,6 +51,17 @@ const updateDivision =async (id: string, payload: Partial<IDivision>) => {
    if(duplicateDivision){
     throw new AppError(httpStatus.BAD_REQUEST, "A division with this name already exists");
    }
+
+//    if(payload.name){
+//        const baseSlug = payload.name.toLowerCase().split(" ").join("-")
+
+//   let slug = `${baseSlug}-division`
+//   let counter = 0
+//   while(await Division.exists({slug})){
+//    slug = `$slug-${counter++}`
+//   }
+//   payload.slug = slug
+//    }
    const updateDivision = await Division.findByIdAndUpdate(id, payload, {new: true,runValidators: true})
    return updateDivision
 }
