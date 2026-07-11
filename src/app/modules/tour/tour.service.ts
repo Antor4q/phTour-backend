@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { excludeField } from "../../contants";
+import { tourSearchableFields } from "./tour.consenst";
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
 
@@ -25,21 +27,70 @@ const createTour = async (payload: ITour) => {
 
 
 const getAllTours = async (query: Record<string, string>) => {
+   
+  const filter = query
+  const search = query.search || ""
+  const sort = query.sort || "-createdAt"
+  const fields = query.fields.split(",").join(" ") || ""
 
+  
+  for(const field of excludeField){
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete filter[field]
+  }
 
-    
+  const searchQuery = {
+    $or: tourSearchableFields.map(field =>({[field]: {$regex: search, $options:"i"}}))
+  }
 
-    const tours = await Tour.find()
-
+    const tours = await Tour.find(searchQuery).find(filter).sort(sort).select(fields)
+    const totalTours = await Tour.countDocuments();
    
 
     return {
         data : tours,
         meta : {
-            total: 10
+            total: totalTours
         }
     }
 };
+// const getAllToursCommented = async (query: Record<string, string>) => {
+//     // filters, search, sorting start from here query
+//     // filter er $options: "i" er mane holo je lowercase korbe ---- ekhon search amon hote pare title er opore na hoia locaiton or date er opore tokhon ei fiedl gola dynamic korte hobe tar jnno
+//   const filter = query
+//   const search = query.search || ""
+//   const sort = query.sort || "-createdAt"
+// const fields = query.fields.split(",").join(" ") || "" jodi ekbar besi fields cau tahole aivave dite hobe first coma remove kore then space hobe -- fields filtering
+// //   ei delte er karon holo jkhon ami filter and search ek sthe korte jamo tokon filter a jei field thakbe exact match korbe search to field nai oitao match korar try korbe exact then data asbe na
+// //   delete filter["search"]
+// //   delete filter["sort"] atar version is for loop
+//   const excludeField = ["search", "sort"]
+//   for(const field of excludeField){
+//     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+//     delete filter[field]
+//   }
+// //   const searchArray = tourSearchableFields.map(field =>({field: {$regex: search, $options:"i"}}))
+//   const searchQuery = {
+//     $or: tourSearchableFields.map(field =>({[field]: {$regex: search, $options:"i"}}))
+//   }
+
+//     // const tours = await Tour.find({
+//     //     title: {$regex: search, $options:"i"} single search
+//     //     multiple field search
+//     //     $or: searchArray
+//     // })
+//     const tours = await Tour.find(searchQuery).find(filter).sort(sort).select(fields)
+// aikhane .select er modhe title ata dara sodho title field er data gola dibe
+//     const totalTours = await Tour.countDocuments();
+   
+
+//     return {
+//         data : tours,
+//         meta : {
+//             total: totalTours
+//         }
+//     }
+// };
 
 
 
