@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/rendResponse";
+
 import { TourService } from "./tour.service";
+import { sendResponse } from "../../utils/rendResponse";
 
 const createTour = catchAsync(async (req: Request, res: Response) => {
       console.log(req.body, " ---from controller")

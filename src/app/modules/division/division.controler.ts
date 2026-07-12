@@ -2,8 +2,9 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { DivisionServices } from "./division.service";
-import { sendResponse } from "../../utils/rendResponse";
+
 import httpStatus from "http-status-codes"
+import { sendResponse } from "../../utils/rendResponse";
 
 
 const createDivision = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
@@ -19,6 +20,17 @@ const createDivision = catchAsync(async(req: Request, res: Response, next: NextF
 
 const getAllDivisions = catchAsync(async(req:Request, res:Response) => {
     const result = await DivisionServices.getAllDivisions();
+     sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Division Retrived Successfully",
+        data: result,
+    })
+}
+)
+const getSingleDivision = catchAsync(async(req:Request, res:Response) => {
+    const slug = req.params.slug as string
+    const result = await DivisionServices.getSingleDivision(slug);
      sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
@@ -51,6 +63,7 @@ const deleteDivision = catchAsync(async (req: Request, res: Response) => {
 export const DivisionControllers = {
     createDivision,
     getAllDivisions,
+    getSingleDivision,
     updateDivision,
     deleteDivision
 }

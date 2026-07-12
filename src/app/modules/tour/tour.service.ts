@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Query } from "mongoose";
 import { excludeField } from "../../contants";
 import { tourSearchableFields } from "./tour.consenst";
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
+import { QueryBuilder } from "../../utils/queryBuilder";
 
 const createTour = async (payload: ITour) => {
     const existingTour = await Tour.findOne({ title: payload.title });
@@ -26,34 +30,75 @@ const createTour = async (payload: ITour) => {
 };
 
 
+
 const getAllTours = async (query: Record<string, string>) => {
    
-  const filter = query
-  const search = query.search || ""
-  const sort = query.sort || "-createdAt"
-  const fields = query.fields.split(",").join(" ") || ""
-
+    const queryBuilder = new QueryBuilder(Tour.find(), query)
+    const tours = await queryBuilder
+    .search(tourSearchableFields)
+    .filter()
+    .sort()
+    .fields()
+    .paginate()
+    
   
-  for(const field of excludeField){
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete filter[field]
-  }
-
-  const searchQuery = {
-    $or: tourSearchableFields.map(field =>({[field]: {$regex: search, $options:"i"}}))
-  }
-
-    const tours = await Tour.find(searchQuery).find(filter).sort(sort).select(fields)
-    const totalTours = await Tour.countDocuments();
-   
-
+//    const meta = await queryBuilder.getMeta()
+   const [data,meta] = await Promise.all([
+    tours.build(),
+    queryBuilder.getMeta()
+   ])
+ 
     return {
-        data : tours,
-        meta : {
-            total: totalTours
-        }
+        data,
+        meta
     }
 };
+// const getAllTours = async (query: Record<string, string>) => {
+   
+//   const filter = query
+//   const search = query.search || ""
+//   const sort = query.sort || "-createdAt"
+//   const fields = query.fields?.split(",").join(" ") || "";
+// //   pagination
+//   const page = Number(query.page) || 1;
+//   const limit = Number(query.limit) || 10;
+//   const skip = (page - 1) * limit
+
+  
+//   for(const field of excludeField){
+//     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+//     delete filter[field]
+//   }
+
+//   const searchQuery = {
+//     $or: tourSearchableFields.map(field =>({[field]: {$regex: search, $options:"i"}}))
+//   }
+
+// //   pagination skip and limit
+
+
+//     // const tours = await Tour.find(searchQuery).find(filter).sort(sort).select(fields).skip(skip).limit(limit)
+//  const filterQuery = Tour.find(filter)
+//  const tours = filterQuery.find(searchQuery)
+//  const allTours = await tours.sort(sort).select(fields).skip(skip).limit(limit)
+
+//     const totalTours = await Tour.countDocuments();
+//     const totalPage = Math.ceil(totalTours / limit)
+
+//     // meta data
+//     const meta = {
+//         page: page,
+//         limit:limit,
+//         totalPage:totalPage,
+//         total:totalTours
+//     }
+   
+
+//     return {
+//         data : allTours,
+//         meta : meta
+//     }
+// };
 // const getAllToursCommented = async (query: Record<string, string>) => {
 //     // filters, search, sorting start from here query
 //     // filter er $options: "i" er mane holo je lowercase korbe ---- ekhon search amon hote pare title er opore na hoia locaiton or date er opore tokhon ei fiedl gola dynamic korte hobe tar jnno
