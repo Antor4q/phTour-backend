@@ -12,13 +12,15 @@ export const TourType = model<ITourType>("TourType", tourTypeSchema)
 
 const tourSchema = new Schema<ITour>({
     title: {type: String, required: true},
-    slug: {type: String, required: true, unique: true},
+    slug: {type: String, unique: true},
     description: {type: String},
     images: {type: [String],default: []},
     location: {type: String},
     costFrom: {type: Number},
     startDate: {type: Date},
     endDate: {type: Date},
+    departureLocation: {type: String},
+    arrivalLocation: {type: String},
     included: {type: [String], default:[]},
     excluded: {type: [String], default:[]},
     amenities: {type: [String], default:[]},
@@ -37,6 +39,46 @@ const tourSchema = new Schema<ITour>({
     }
 },{
     timestamps: true
+})
+
+// jodi slug ta model and zod a required thakto tahole "save" kaj korbe na tar jnno "validate" use korte hobe
+tourSchema.pre("save", async function () {
+    
+  if (this.title) {
+    // const baseSlug = this.title
+    //   .toLowerCase()
+    //   .trim()
+    //   .replace(/\s+/g, "-");
+    const baseSlug = this.title.toLowerCase().split(" ").join("-")
+
+    let slug = baseSlug;
+    let counter = 1;
+
+    while (await Tour.exists({ slug })) {
+      slug = `${baseSlug}-${counter++}`;
+    }
+
+    this.slug = slug;
+  }
+});
+
+
+// ata update er jnno pre hook
+tourSchema.pre("findOneAndUpdate", async function(){
+//  
+ const tour = this.getUpdate() as Partial<ITour>
+ 
+ if(tour.title){
+     const baseSlug = tour.title.toLowerCase().split(" ").join("-")
+
+  let slug = `${baseSlug}-tour`
+  let counter = 0
+  while(await Tour.exists({slug})){
+   slug = `$slug-${counter++}`
+  }
+  tour.slug = slug
+ }
+ this.setUpdate(tour)
 })
 
 export const Tour = model<ITour>("Tour", tourSchema)
