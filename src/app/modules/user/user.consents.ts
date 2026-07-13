@@ -1,0 +1,1 @@
+export const userSearchable = ["name","email","address"]
