@@ -3,12 +3,13 @@ import { ITour, ITourType } from "./tour.interface";
 
 
 const tourTypeSchema = new Schema<ITourType>({
- name: {type:String, required: true, unique: true}
+ name: {type:String, required: true, unique: true},
+ slug: {type:String}
 },{
     timestamps: true
 })
 
-export const TourType = model<ITourType>("TourType", tourTypeSchema)
+
 
 const tourSchema = new Schema<ITour>({
     title: {type: String, required: true},
@@ -61,6 +62,23 @@ tourSchema.pre("save", async function () {
     this.slug = slug;
   }
 });
+tourTypeSchema.pre("save", async function () {
+    
+  if (this.name) {
+  
+    const baseSlug = this.name.toLowerCase().split(" ").join("-")
+
+    let slug = baseSlug;
+    let counter = 1;
+   
+    while (await TourType.exists({ slug })) {
+      slug = `${baseSlug}-${counter++}`;
+    }
+
+    this.slug = slug;
+  
+  }
+});
 
 
 // ata update er jnno pre hook
@@ -80,5 +98,22 @@ tourSchema.pre("findOneAndUpdate", async function(){
  }
  this.setUpdate(tour)
 })
+tourTypeSchema.pre("findOneAndUpdate", async function(){
+//  
+ const tourType = this.getUpdate() as Partial<ITourType>
+ 
+ if(tourType.name){
+     const baseSlug = tourType.name.toLowerCase().split(" ").join("-")
+
+  let slug = `${baseSlug}-tourType`
+  let counter = 0
+  while(await TourType.exists({slug})){
+   slug = `$slug-${counter++}`
+  }
+  tourType.slug = slug
+ }
+ this.setUpdate(tourType)
+})
 
 export const Tour = model<ITour>("Tour", tourSchema)
+export const TourType = model<ITourType>("TourType", tourTypeSchema)
