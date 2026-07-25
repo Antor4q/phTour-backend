@@ -10,6 +10,8 @@ import { PAYMENT_STATUS } from "../payment/payment.interface";
 import { Tour } from "../tour/tour.model";
 import { SSLService } from "../sslcommerz/sslcommerz.service";
 import { ISSLCommerz } from "../sslcommerz/sslcommerz.interface";
+import { QueryBuilder } from "../../utils/queryBuilder";
+import { bookingSearchableFields } from "./booking.consent";
 
 
 
@@ -118,8 +120,8 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
 // Frontend(localhost:5173) - User - Tour - Booking (Pending) - Payment(Unpaid) -> SSLCommerz Page -> Payment Fail / Cancel -> Backend(localhost:5000) -> Update Payment(FAIL / CANCEL) & Booking(FAIL / CANCEL) -> redirect to frontend -> Frontend(localhost:5173/payment/cancel or localhost:5173/payment/fail)
 
 const getUserBookings = async () => {
-
-    return {}
+//    
+ 
 };
 
 const getBookingById = async () => {
@@ -133,9 +135,26 @@ const updateBookingStatus = async (
     return {}
 };
 
-const getAllBookings = async () => {
-
-    return {}
+const getAllBookings = async (query : Record<string, string>) => {
+    const queryBuilder = new QueryBuilder(Booking.find(), query)
+       const tours = await queryBuilder
+       .search(bookingSearchableFields)
+       .filter()
+       .sort()
+       .fields()
+       .paginate()
+       
+     
+   //    const meta = await queryBuilder.getMeta()
+      const [data,meta] = await Promise.all([
+       tours.build(),
+       queryBuilder.getMeta()
+      ])
+    
+       return {
+           data,
+           meta
+       }
 };
 
 export const BookingService = {
