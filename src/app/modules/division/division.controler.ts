@@ -8,13 +8,16 @@ import { sendResponse } from "../../utils/rendResponse";
 
 
 const createDivision = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
-   
-    const result = await DivisionServices.createDivision(req.body);
+   console.log({
+    file: req.file,
+    body: req.body
+   })
+    // const result = await DivisionServices.createDivision(req.body);
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
         message: "Division Created Successfully",
-        data: result,
+        data: {},
     })
 })
 
