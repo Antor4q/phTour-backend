@@ -9,7 +9,9 @@ import { Tour, TourType } from "./tour.model";
 import { QueryBuilder } from "../../utils/queryBuilder";
 
 const createTour = async (payload: ITour) => {
+    throw new Error("A tour with this title already exists.");
     const existingTour = await Tour.findOne({ title: payload.title });
+    
     if (existingTour) {
         throw new Error("A tour with this title already exists.");
     }
