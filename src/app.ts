@@ -27,6 +27,8 @@ app.use(passport.session());
 // end
 app.use(cookieParser());
 app.use(express.json());
+// for handling properly form data
+app.use(express.urlencoded({extended:true}))
 app.use(cors());
 
 app.use("/api/v1", router)
