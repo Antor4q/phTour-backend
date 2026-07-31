@@ -11,7 +11,8 @@ const router = Router()
 router.post(
 "/create",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), 
 multerUpload.single("file"),
-validateRequest(createDivisionZodSchema), DivisionControllers.createDivision)
+validateRequest(createDivisionZodSchema),
+ DivisionControllers.createDivision)
 
 router.get("/", DivisionControllers.getAllDivisions);
 router.get("/:slug",DivisionControllers.getSingleDivision)

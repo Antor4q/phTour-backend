@@ -8,10 +8,11 @@ import { handlerCastErrors } from "../helpers/handleCastErr"
 import { handlerZodErrors } from "../helpers/handleZodErr"
 import { handlerValidationErrors } from "../helpers/handleValidationErr"
 import { TErrorSources } from "../interfaces/error.types"
+import { deleteImageFromCloudinary } from "../config/cloudinary.config"
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-export const globalErrHandler = ((err:any, req: Request, res: Response, next: NextFunction)=>{
+export const globalErrHandler = async(err:any, req: Request, res: Response, next: NextFunction)=>{
  if(envVar.NODE_ENV === "development"){
             console.log(err)
         }
@@ -23,6 +24,16 @@ export const globalErrHandler = ((err:any, req: Request, res: Response, next: Ne
    * 3> validation error
    * zod
    * */ 
+
+    if(req.file){
+      await deleteImageFromCloudinary(req.file.path)
+    }
+    
+    if(req.files && Array.isArray(req.files) && req.files.length > 0){
+      const imageUrls= (req.files as Express.Multer.File[])?.map(file => file.path)
+      await Promise.all(imageUrls.map(url => deleteImageFromCloudinary(url)))
+    }
+   
     let errorSources: TErrorSources[] = []
     let statusCode = 500
     let message = `Something went wrong!`
@@ -69,6 +80,6 @@ export const globalErrHandler = ((err:any, req: Request, res: Response, next: Ne
     err : envVar.NODE_ENV === "development" ? err : null,
     Stack: envVar.NODE_ENV === "development" ? err.stack : null
   })
-})
+}
 
 // its an globalError Handler

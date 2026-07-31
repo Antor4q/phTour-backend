@@ -5,19 +5,21 @@ import { DivisionServices } from "./division.service";
 
 import httpStatus from "http-status-codes"
 import { sendResponse } from "../../utils/rendResponse";
+import { IDivision } from "./division.interface";
 
 
 const createDivision = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
-   console.log({
-    file: req.file,
-    body: req.body
-   })
-    // const result = await DivisionServices.createDivision(req.body);
+  
+   const payload:IDivision = {
+    ...req.body,
+    thumbnail: req.file?.path
+   }
+    const result = await DivisionServices.createDivision(payload);
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
         message: "Division Created Successfully",
-        data: {},
+        data: result,
     })
 })
 
