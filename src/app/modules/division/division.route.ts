@@ -16,7 +16,7 @@ validateRequest(createDivisionZodSchema),
 
 router.get("/", DivisionControllers.getAllDivisions);
 router.get("/:slug",DivisionControllers.getSingleDivision)
-router.patch("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(updateDivisionZodSchema), DivisionControllers.updateDivision);
+router.patch("/:id", multerUpload.single("file"), checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(updateDivisionZodSchema), DivisionControllers.updateDivision);
 router.delete("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), DivisionControllers.deleteDivision)
 
 
