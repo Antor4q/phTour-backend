@@ -10,7 +10,9 @@ const router = Router()
 router.post("/login", AuthControllers.credentialLogin)
 router.post("/refresh-token", AuthControllers.getNewAccessToken)
 router.post("/logout", AuthControllers.logOut)
+router.post("/change-password",checkAuth(...Object.values(Role)), AuthControllers.changePassword)
 router.post("/reset-password",checkAuth(...Object.values(Role)), AuthControllers.resetPassword)
+router.post("/set-password",checkAuth(...Object.values(Role)), AuthControllers.setPassword)
 // passport google auth routes
 // /booking -> /login -> successful google login -> /booking frontend
 // /login -> successful google login -> /frontend home
@@ -20,4 +22,4 @@ router.get("/google", async(req: Request, res: Response, next: NextFunction) => 
 })
 router.get("/google/callback", passport.authenticate("google",{failureRedirect: "/login"}), AuthControllers.googleAuthCallback)
 
-export const AuthRoutes = router;
+export const AuthRoutes = router;j

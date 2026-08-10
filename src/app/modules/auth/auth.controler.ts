@@ -89,6 +89,33 @@ const logOut = catchAsync(async(req: Request, res: Response, next: NextFunction)
         data: null,
     })
 })
+const changePassword = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
+    const newPass = req.body.newPassword;
+    const oldPassword = req.body.oldPassword;
+    const decodedToken = req.user
+
+     await AuthServices.changePassword(oldPassword, newPass, decodedToken as JwtPayload)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Password changed Successfully",
+        data: null,
+    })
+})
+const setPassword = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
+    const {password} = req.body;
+    const decodedToken = req.user
+    console.log("decodedToken", decodedToken)
+    console.log("passwordhobe", password)
+
+     await AuthServices.setPassword(decodedToken?.userId, password)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Password set Successfully",
+        data: null,
+    })
+})
 const resetPassword = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
     const newPass = req.body.newPassword;
     const oldPassword = req.body.oldPassword;
@@ -134,6 +161,8 @@ export const AuthControllers = {
     credentialLogin,
     getNewAccessToken,
     logOut,
+    setPassword,
+    changePassword,
     resetPassword,
     googleAuthCallback
 }
