@@ -3,7 +3,7 @@ import { Response } from "express";
 interface TMeta {
     page: number,
     limit: number,
-    totalPages: number,
+    totalPage: number,
     total: number
 }
 
