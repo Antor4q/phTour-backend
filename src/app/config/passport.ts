@@ -6,8 +6,8 @@ import { User } from "../modules/user/user.model";
 import { IsActive, Role } from "../modules/user/user.interface";
 import { Strategy as localStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
-import AppError from "../errorHelpers/appError";
-import httStatus from "http-status-codes"
+// import AppError from "../errorHelpers/appError";
+// import httStatus from "http-status-codes"
 
 
 // passportJs for custom auth start
@@ -27,18 +27,18 @@ passport.use(
         }
          if(isUserExist.isVerified === false){
                 // throw new AppError(httStatus.BAD_REQUEST, "User is not verified")
-                done("User is not verified")
+               return done("User is not verified")
             }
         
 
            if(isUserExist.isActive === IsActive.BLOCKED || isUserExist.isActive === IsActive.INACTIVE){
                         //   throw new AppError(httStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
                         // }
-                         done(`User is ${isUserExist.isActive}`)
+                      return   done(`User is ${isUserExist.isActive}`)
            }
             if(isUserExist?.isDeleted){
-                          throw new AppError(httStatus.BAD_REQUEST, "User is Deleted")
-                        //    done("User is deleted")
+                        //   throw new AppError(httStatus.BAD_REQUEST, "User is Deleted")
+                          return done("User is deleted")
                         }
             
            
@@ -81,18 +81,19 @@ passport.use(
              if(isUserExist && isUserExist.isVerified === false){
                 // throw new AppError(httStatus.BAD_REQUEST, "User is not verified")
                 // done("User is not verified")
-                done(null, false, {message: "User is not verified"})
+               return done(null, false, {message: "User is not verified"})
             }
         
 
-           if( isUserExist && isUserExist.isActive === IsActive.BLOCKED || isUserExist && isUserExist.isActive === IsActive.INACTIVE){
+           if( isUserExist && (isUserExist.isActive === IsActive.BLOCKED || isUserExist.isActive === IsActive.INACTIVE)){
                         //   throw new AppError(httStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
                         // }
-                         done(`User is ${isUserExist.isActive}`)
+                        return done(null, false, {message: `User is ${isUserExist.isActive}`})
+                         
            }
-            if(isUserExist?.isDeleted){
-                          throw new AppError(httStatus.BAD_REQUEST, "User is Deleted")
-                        //    done("User is deleted")
+            if(isUserExist && isUserExist?.isDeleted){
+                        //   throw new AppError(httStatus.BAD_REQUEST, "User is Deleted")
+                           return done(null, false, {message: "User is deleted"})
                         }
             
             if(!isUserExist){

@@ -22,7 +22,7 @@ const credentialLogin = catchAsync(async(req: Request, res: Response, next: Next
     passport.authenticate("local", async(err:any,user: any, info:any)=>{
 
         if(err){
-            return next(new AppError(err.statusCode || 401, err.message))
+            return next(new AppError(401, err.message))
             // return next(err)
         }
         if(!user){
@@ -129,6 +129,17 @@ const resetPassword = catchAsync(async(req: Request, res: Response, next: NextFu
         data: null,
     })
 })
+const forgotPassword = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
+    const { email} = req.body;
+
+     await AuthServices.forgotPassword(email)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Email sent Successfully",
+        data: null,
+    })
+})
 
 // google callback controller
 const googleAuthCallback = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
@@ -164,5 +175,6 @@ export const AuthControllers = {
     setPassword,
     changePassword,
     resetPassword,
+    forgotPassword,
     googleAuthCallback
 }
