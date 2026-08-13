@@ -12,6 +12,7 @@ import { SSLService } from "../sslcommerz/sslcommerz.service";
 import { ISSLCommerz } from "../sslcommerz/sslcommerz.interface";
 import { QueryBuilder } from "../../utils/queryBuilder";
 import { bookingSearchableFields } from "./booking.consent";
+import { getTransactionId } from "../../utils/getTransactionId";
 
 
 
@@ -21,9 +22,7 @@ import { bookingSearchableFields } from "./booking.consent";
  * Relica DB -> [ Create Booking -> Create Payment ->  Update Booking -> Error] -> Real DB
  */
 
-const getTransactionId = () => {
-    return `tran_${Date.now()}_${Math.floor(Math.random() * 1000)}`
-}
+
 
 /**
  * Duplicate DB collections / relics

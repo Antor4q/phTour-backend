@@ -1,3 +1,4 @@
+import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
 import AppError from "../../errorHelpers/appError";
 import { QueryBuilder } from "../../utils/queryBuilder";
 import { divisionSearchable } from "./division.contants";
@@ -84,6 +85,10 @@ const updateDivision =async (id: string, payload: Partial<IDivision>) => {
 //   payload.slug = slug
 //    }
    const updateDivision = await Division.findByIdAndUpdate(id, payload, {new: true,runValidators: true})
+
+   if(payload.thumbnail && existingDivision.thumbnail){
+      await deleteImageFromCloudinary(existingDivision.thumbnail)
+   }
    return updateDivision
 }
 const deleteDivision = async(id:string) => {
