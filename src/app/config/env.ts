@@ -18,6 +18,10 @@ interface EnvConfig{
     GOOGLE_CALLBACK_URL: string;
     EXPRESS_SESSION_SECRET: string;
     FRONTEND_URL: string;
+     REDIS_HOST: string;
+        REDIS_PORT: string;
+        REDIS_USERNAME: string;
+        REDIS_PASSWORD: string;
     SSL: {
         SSL_STORE_ID: string;
         SSL_STORE_PASS: string;
@@ -43,10 +47,13 @@ interface EnvConfig{
         SMTP_PASS: string;
         SMTP_FORM: string;
     };
+   
 }
 
 const loadEnvVariables = (): EnvConfig => {
-    const requiredEnvVars : string[] = ['PORT', 'DB_URL', 'NODE_ENV','JWT_ACCESS_SECRET','JWT_ACCESS_EXPIRES','BCRYPT_SALT_ROUND','SUPER_ADMIN_EMAIL','SUPER_ADMIN_PASSWORD','JWT_REFRESH_SECRET','JWT_REFRESH_EXPIRES','GOOGLE_CLIENT_SECRET','GOOGLE_CLIENT_ID','GOOGLE_CALLBACK_URL','EXPRESS_SESSION_SECRET','FRONTEND_URL','SSL_STORE_ID','SSL_STORE_PASS','SSL_PAYMENT_API','SSL_VALIDATION_API','SSL_SUCCESS_FRONTEND_URL','SSL_FAIL_FRONTEND_URL','SSL_CANCEL_FRONTEND_URL','SSL_SUCCESS_BACKEND_URL','SSL_FAIL_BACKEND_URL','SSL_CANCEL_BACKEND_URL','CLOUDINARY_CLOUD_NAME','CLOUDINARY_API_KEY','CLOUDINARY_API_SECRET','SMTP_FORM', 'SMTP_PASS','SMTP_USER','SMTP_PORT','SMTP_HOST'];
+    const requiredEnvVars : string[] = [
+'PORT', 'DB_URL', 'NODE_ENV','JWT_ACCESS_SECRET','JWT_ACCESS_EXPIRES','BCRYPT_SALT_ROUND','SUPER_ADMIN_EMAIL','SUPER_ADMIN_PASSWORD','JWT_REFRESH_SECRET','JWT_REFRESH_EXPIRES','GOOGLE_CLIENT_SECRET','GOOGLE_CLIENT_ID','GOOGLE_CALLBACK_URL','EXPRESS_SESSION_SECRET','FRONTEND_URL','SSL_STORE_ID','SSL_STORE_PASS','SSL_PAYMENT_API','SSL_VALIDATION_API','SSL_SUCCESS_FRONTEND_URL','SSL_FAIL_FRONTEND_URL','SSL_CANCEL_FRONTEND_URL','SSL_SUCCESS_BACKEND_URL','SSL_FAIL_BACKEND_URL','SSL_CANCEL_BACKEND_URL','CLOUDINARY_CLOUD_NAME','CLOUDINARY_API_KEY','CLOUDINARY_API_SECRET','SMTP_FORM', 'SMTP_PASS','SMTP_USER','SMTP_PORT','SMTP_HOST','REDIS_PASSWORD','REDIS_USERNAME','REDIS_PORT','REDIS_HOST'
+];
     requiredEnvVars.forEach(key => {
         if(!process.env[key]) {
             throw new Error(`Missing required environment variable: ${key}`);
@@ -68,6 +75,10 @@ const loadEnvVariables = (): EnvConfig => {
         GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
         EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET as string,
         FRONTEND_URL: process.env.FRONTEND_URL as string,
+         REDIS_HOST: process.env.REDIS_HOST as string,
+        REDIS_PORT:process.env.REDIS_PORT as string,
+        REDIS_USERNAME: process.env.REDIS_USERNAME as string,
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
         SSL : {
             SSL_STORE_ID: process.env.SSL_STORE_ID as string,
             SSL_STORE_PASS: process.env.SSL_STORE_PASS as string,
@@ -92,7 +103,8 @@ const loadEnvVariables = (): EnvConfig => {
         SMTP_USER: process.env.SMTP_USER as string,
         SMTP_PASS: process.env.SMTP_PASS as string,
         SMTP_FORM: process.env.SMTP_FORM as string
-    }
+    },
+        
     };
 }; 
 
