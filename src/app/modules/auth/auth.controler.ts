@@ -117,11 +117,10 @@ const setPassword = catchAsync(async(req: Request, res: Response, next: NextFunc
     })
 })
 const resetPassword = catchAsync(async(req: Request, res: Response, next: NextFunction)=>{
-    const newPass = req.body.newPassword;
-    const oldPassword = req.body.oldPassword;
+   
     const decodedToken = req.user
 
-     await AuthServices.resetPassword(oldPassword, newPass, decodedToken as JwtPayload)
+     await AuthServices.resetPassword(req.body, decodedToken as JwtPayload)
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
@@ -167,6 +166,7 @@ if (typeof req.query.state === "string") {
     // })
     res.redirect(`${envVar.FRONTEND_URL}/${redirectUrl}`);
 })
+// http://localhost:5173/reset-password?id=6a7974e25bd3da2c1ddbada1&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTc5NzRlMjViZDNkYTJjMWRkYmFkYTEiLCJlbWFpbCI6ImlveG9yYXRlY2hAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODY3NzEyMDksImV4cCI6MTc4Njc3MTgwOX0.xVL_KioCZ6o1RCSWfnhHfh-9sfGbHGXa5zvQ4zHZx1s
 
 export const AuthControllers = {
     credentialLogin,
