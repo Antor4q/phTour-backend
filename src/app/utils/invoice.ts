@@ -264,7 +264,7 @@ const generatePdf = async (invoiceData: IInvoiceData): Promise<Buffer> => {
             .fontSize(10)
             .font("Helvetica-Bold")
             .text(
-               `৳${invoiceData.totalAmount.toFixed(2)}`,
+               `$${invoiceData.totalAmount.toFixed(2)}`,
                450,
                rowTop + 20
             );
@@ -290,7 +290,7 @@ const generatePdf = async (invoiceData: IInvoiceData): Promise<Buffer> => {
          doc
             .fillColor(primaryColor)
             .text(
-               `৳${invoiceData.totalAmount.toFixed(2)}`,
+               `$${invoiceData.totalAmount.toFixed(2)}`,
                455,
                summaryTop + 30,
                {
@@ -317,7 +317,7 @@ const generatePdf = async (invoiceData: IInvoiceData): Promise<Buffer> => {
             .font("Helvetica-Bold")
             .fillColor(successColor)
             .text(
-               `৳${invoiceData.totalAmount.toFixed(2)}`,
+               `$${invoiceData.totalAmount.toFixed(2)}`,
                430,
                summaryTop + 70,
                {
