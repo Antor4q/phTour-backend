@@ -53,6 +53,8 @@ const getNewAccessToken = async (refreshToken: string) => {
 }
 const changePassword = async (oldPassword: string, newPass: string, decodedToken:JwtPayload) => {
 
+  // check if old password and new password is same give an error
+
     const user = await User.findById(decodedToken.userId)
    
        const isOldPasswordMatch = await bcrypt.compare(oldPassword, user!.password as string)

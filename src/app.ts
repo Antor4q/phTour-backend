@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import expressSession from "express-session"
 import './app/config/passport'
+import { envVar } from './app/config/env';
 
 
 
@@ -29,7 +30,10 @@ app.use(cookieParser());
 app.use(express.json());
 // for handling properly form data
 app.use(express.urlencoded({extended:true}))
-app.use(cors());
+app.use(cors({
+   origin: envVar.FRONTEND_URL,
+   credentials: true
+}));
 
 app.use("/api/v1", router)
 
