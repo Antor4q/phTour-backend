@@ -1,3 +1,4 @@
+import { Tour } from "../tour/tour.model";
 import { IsActive } from "../user/user.interface";
 import { User } from "../user/user.model";
 
@@ -51,7 +52,29 @@ const getUserStats = async()=> {
 }
 
 const getTourStats = async()=> {
-    // 
+   
+    const totalTourPromise = Tour.countDocuments();
+    const totalTourByTourTypePromise = Tour.aggregate([
+        // stage -1: connect tour type model: lookup stage
+        {
+        $lookup: {
+            from: "tourtypes",
+            localField: "tourType",
+            foreignField: "_id",
+            as:"type"
+        }
+    }
+])
+
+    const [totalTour, totalToutByTourType] = await Promise.all([
+        totalTourPromise,
+        totalTourByTourTypePromise
+    ])
+
+    return {
+        totalTour,
+       totalToutByTourType
+    }
 }
 
 const getBookingStats = async()=> {
